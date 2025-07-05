@@ -1,0 +1,41 @@
+#include <IRremote.h>
+#include <Servo.h>
+
+const int RECV_PIN = 11; // IR Receiver pin
+const int SERVO_PIN = 9; // Servo motor signal pin
+
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+Servo myServo;
+
+int angle = 90; // Initial angle
+
+void setup() {
+  Serial.begin(9600);
+  irrecv.enableIRIn(); // Start IR receiver
+  myServo.attach(SERVO_PIN);
+  myServo.write(angle); // Set to middle position
+}
+
+void loop() {
+  if (irrecv.decode(&results)) {
+    unsigned long key = results.value;
+    Serial.println(key, HEX); // Check the code in Serial Monitor
+
+    // Example: Define actions for known keys
+    if (key == 0xFFA25D) {         // "CH-" button
+      angle = constrain(angle - 10, 0, 180);
+      myServo.write(angle);
+    }
+    else if (key == 0xFF629D) {    // "CH" button
+      angle = 90;
+      myServo.write(angle);
+    }
+    else if (key == 0xFFE21D) {    // "CH+" button
+      angle = constrain(angle + 10, 0, 180);
+      myServo.write(angle);
+    }
+
+    irrecv.resume(); // Ready to receive the next code
+  }
+}
