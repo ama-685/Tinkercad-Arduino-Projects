@@ -1,0 +1,54 @@
+// TMP35 sensor on A1 (PB2)
+const int TMP35_PIN = 3;
+
+// DIP switch on PB3 (digital 3)
+const int DIP_PIN = 2;
+
+// RGB LED pins
+const int RED_PIN = 5;
+const int GREEN_PIN = 7;
+const int BLUE_PIN = 6;
+
+void setup() {
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
+
+  pinMode(DIP_PIN, INPUT_PULLUP); // DIP switch to GND
+}
+
+void loop() {
+  // Read DIP switch status
+  bool dipSwitchOn = digitalRead(DIP_PIN) == LOW;
+
+  // Read analog voltage from TMP35
+  int analogVal = analogRead(TMP35_PIN);
+  float voltage = (analogVal / 1023.0) * 3.0; // Using 3V supply
+  float temperatureC = (voltage - 0.5) * 100.0;
+
+  if (dipSwitchOn) {
+    // DIP switch ON: use different threshold (example)
+    if (temperatureC < 20) {
+      showColor(0, 0, 255);  // Blue: cold
+    } else if (temperatureC < 30) {
+      showColor(0, 255, 0);  // Green: normal
+    } else {
+      showColor(255, 0, 0);  // Red: hot
+    }
+  } else {
+    // DIP switch OFF: show only red for hot (>30°C)
+    if (temperatureC > 30) {
+      showColor(255, 0, 0);
+    } else {
+      showColor(0, 0, 0); // Off
+    }
+  }
+
+  delay(500); // Small delay for stability
+}
+
+void showColor(int r, int g, int b) {
+  analogWrite(RED_PIN, 255 - r);   // Invert if common anode
+  analogWrite(GREEN_PIN, 255 - g); // Invert if common anode
+  analogWrite(BLUE_PIN, 255 - b);  // Invert if common anode
+}
