@@ -1,0 +1,33 @@
+// Define pins for buttons
+const int buttonPins[8] = {5, 6, 7, 8, 9, 10, 11, 12};
+
+// Define note frequencies (C major scale)
+const int notes[8] = {
+  262, // C4
+  294, // D4
+  330, // E4
+  349, // F4
+  392, // G4
+  440, // A4
+  494, // B4
+  523  // C5
+};
+
+const int buzzerPin = 13;
+
+void setup() {
+  for (int i = 0; i < 8; i++) {
+    pinMode(buttonPins[i], INPUT_PULLUP);
+  }
+  pinMode(buzzerPin, OUTPUT);
+}
+
+void loop() {
+  for (int i = 0; i < 8; i++) {
+    if (digitalRead(buttonPins[i]) == HIGH) {
+      tone(buzzerPin, notes[i]);
+      delay(100); // Short delay to allow note to play
+      noTone(buzzerPin);
+    }
+  }
+}
