@@ -1,0 +1,50 @@
+const int trigPin = 7;
+
+
+long duration;
+float distanceCm;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+
+  // Clear the trigger pin
+  pinMode(trigPin, OUTPUT);
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  
+  // Trigger the sensor by setting the trigPin HIGH for 10µs
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  pinMode(trigPin, INPUT);
+  // Read the echoPin and calculate the duration
+  duration = pulseIn(trigPin, HIGH);
+
+  // Calculate distance in cm (Speed of sound is ~343 m/s)
+  distanceCm = duration * 0.034 / 2;
+  pinMode(13, OUTPUT);
+  if(distanceCm > 10.0){
+  digitalWrite(13, HIGH);
+  }else{
+  digitalWrite(13,LOW);
+  }
+    if(distanceCm > 20.0){
+  digitalWrite(12, HIGH);
+  }else{
+  digitalWrite(12,LOW);
+  }
+    if(distanceCm > 30.0){
+  digitalWrite(11, HIGH);
+  }else{
+  digitalWrite(11,LOW);
+  }
+  // Print the distance to Serial Monitor
+  Serial.print("Distance: ");
+  Serial.print(distanceCm);
+  Serial.println(" cm");
+
+  delay(100); // Wait before next measurement
+}
