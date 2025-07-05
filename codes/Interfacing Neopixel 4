@@ -1,0 +1,29 @@
+#include <Adafruit_NeoPixel.h>
+
+#define PIN        6      // Data pin connected to the NeoPixel strip
+#define NUMPIXELS  4      // Number of LEDs in the strip
+
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+void setup() {
+  pixels.begin(); // Initialize the NeoPixel library.
+  pixels.show();  // Turn off all pixels initially
+}
+
+void loop() {
+  // Cycle through the 4 LEDs with different colors
+  for (int i = 0; i < NUMPIXELS; i++) {
+    pixels.clear(); // Turn off all pixels
+    pixels.setPixelColor(i, pixels.Color(255, 0, 0)); // Red
+    pixels.show();
+    delay(500);
+    
+    pixels.setPixelColor(i, pixels.Color(0, 255, 0)); // Green
+    pixels.show();
+    delay(500);
+    
+    pixels.setPixelColor(i, pixels.Color(0, 0, 255)); // Blue
+    pixels.show();
+    delay(500);
+  }
+}
