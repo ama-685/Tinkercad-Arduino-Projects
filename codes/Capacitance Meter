@@ -1,0 +1,47 @@
+const int chargePin = 8;  // Charges the capacitor
+const int sensePin = A0;  // Reads capacitor voltage
+const int dischargePin = 9; // Discharges capacitor
+
+const float resistor = 10000.0; // 10k ohm resistor
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(chargePin, OUTPUT);
+  pinMode(dischargePin, OUTPUT);
+  digitalWrite(chargePin, LOW);
+  digitalWrite(dischargePin, LOW);
+  Serial.println("Capacitance Meter Ready");
+}
+
+void loop() {
+  // Discharge capacitor
+  pinMode(sensePin, OUTPUT);
+  digitalWrite(sensePin, LOW);
+  digitalWrite(dischargePin, HIGH);
+  delay(1000);  // Wait for full discharge
+  digitalWrite(dischargePin, LOW);
+  pinMode(sensePin, INPUT);
+
+  // Start charging and timing
+  unsigned long startTime = micros();
+  digitalWrite(chargePin, HIGH);
+  
+  // Wait until the capacitor reaches about 63.2% of Vcc (~3.2V if Vcc = 5V)
+  while (analogRead(sensePin) < 648) {
+    if ((micros() - startTime) > 3000000) { // timeout after 3 seconds
+      Serial.println("Timeout");
+      return;
+    }
+  }
+
+  unsigned long chargeTime = micros() - startTime;
+  digitalWrite(chargePin, LOW);  // Stop charging
+
+  // Calculate capacitance (in microfarads)
+  float capacitance = (float)chargeTime / resistor; // microseconds / ohms = microfarads
+  Serial.print("Capacitance: ");
+  Serial.print(capacitance, 2);
+  Serial.println(" uF");
+
+  delay(2000); // Wait before next reading
+}
