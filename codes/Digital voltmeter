@@ -1,0 +1,30 @@
+#include <LiquidCrystal.h>
+
+// LCD: RS, E, D4-D7
+LiquidCrystal lcd(11, 12, 5, 4, 3, 2);
+
+// Resistors in voltage divider
+const float R1 = 90000.0; // 90kΩ
+const float R2 = 10000.0; // 10kΩ
+
+void setup() {
+  lcd.begin(16, 2);
+  lcd.print("Digital Voltmeter");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+  int analogValue = analogRead(A0);
+  float voltageAtA0 = analogValue * (5.0 / 1023.0);
+  float actualVoltage = voltageAtA0 * ((R1 + R2) / R2);
+
+  lcd.setCursor(0, 0);
+  lcd.print("Voltage:");
+
+  lcd.setCursor(0, 1);
+  lcd.print(actualVoltage, 2); // 2 decimal places
+  lcd.print(" V      ");
+
+  delay(500);
+}
