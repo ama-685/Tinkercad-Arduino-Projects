@@ -1,0 +1,29 @@
+const int sensorPin = A0;           // TMP35 connected to analog pin A0
+const float voltageRef = 5.0;       // Arduino reference voltage (usually 5V)
+const int adcResolution = 1024;     // 10-bit ADC resolution
+
+void setup() {
+  Serial.begin(9600);               // Start serial communication
+}
+
+void loop() {
+  int sensorValue = analogRead(sensorPin); // Read analog value from TMP35
+
+  // Convert ADC value to voltage (in millivolts)
+  float voltage = (sensorValue / float(adcResolution)) * voltageRef * 1000.0; // mV
+
+  // Convert voltage to temperature in Celsius using TMP35 formula
+  float temperatureC = (voltage - 500.0) / 10.0;
+
+  // Convert Celsius to Fahrenheit
+  float temperatureF = (temperatureC * 9.0 / 5.0) + 32.0;
+
+  // Print the result
+  Serial.print("Temperature: ");
+  Serial.print(temperatureC);
+  Serial.print(" °C  |  ");
+  Serial.print(temperatureF);
+  Serial.println(" °F");
+
+  delay(1000); // Wait for 1 second before next reading
+}
